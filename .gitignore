@@ -1,0 +1,14 @@
+.idea
+node_modules/
+dist/
+
+# ENV
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# SQLITE
+data/*.sqlite
+data/*.sqlite-shm
+data/*.sqlite-wal

@@ -1,0 +1,21 @@
+export const DISCUSSION_STATUSES = {
+    NEW: 'NEW',
+    OPEN: 'OPEN',
+    DEFERRED: 'DEFERRED',
+    CLOSED: 'CLOSED',
+} as const;
+
+export const DISCUSSION_LEVELS = {
+    QUICK: 'QUICK',
+    STRUCTURED: 'STRUCTURED',
+    DECISION: 'DECISION',
+} as const;
+
+export const DISCUSSION_CATEGORIES = {
+    GAMEPLAY: 'GAMEPLAY',
+    ART_AND_DESIGN: 'ART & DESIGN',
+    TECHNICAL: 'TECHNICAL',
+    GAME_DESIGN: 'GAME DESIGN',
+    AUDIO: 'AUDIO',
+    WORKFLOW: 'WORKFLOW',
+} as const;
