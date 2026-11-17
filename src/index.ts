@@ -5,16 +5,30 @@ import {
     GatewayIntentBits,
     Events,
     MessageFlags,
+    PermissionFlagsBits,
     type ChatInputCommandInteraction,
     type ModalSubmitInteraction,
-    type StringSelectMenuInteraction,
 } from 'discord.js';
+import { handleCloseDiscussion } from "./app/services/discussion-close.service.js";
 
 import { CommandName } from './shared/enums/command-name.enum.js';
 import { SubcommandName } from './shared/enums/subcommand-name.enum.js';
 
-// EXTENSIONS 
-import './shared/extensions/extensions.module.js';
+import { handleDiscussionButton } from './app/components/discussion-button.handler.js';
+import { handleDeferDiscussion } from './app/services/discussion-defer.service.js';
+
+import {
+    getForumChannel,
+    getTextChannel,
+    validateChannelPermissions,
+} from './shared/helpers/channel.helpers.js';
+import { validateGuildRole } from './shared/helpers/role.helpers.js';
+
+import { setupGuildConfiguration } from './app/services/guild-configuration.service.js';
+import { guildConfigurationRepository } from './database/repositories/guild-configuration.repository.js';
+
+// EXTENSIONS MODULE
+import './shared/modules/extensions.module.js';
 
 import {
     CREATE_DISCUSSION_MODAL_ID,
@@ -28,11 +42,9 @@ import {
 import {
     isDiscussionCategory,
     isDiscussionLevel,
-    isDiscussionStatus,
 } from './shared/helpers/forum-tag.helpers.js';
 
 import { createDiscussionPost } from './app/services/discussion.service.js';
-import { updateDiscussionStatus } from './app/services/discussion-history.service.js';
 
 const token = process.env.DISCORD_TOKEN;
 
@@ -44,9 +56,121 @@ const client = new Client({
     intents: [GatewayIntentBits.Guilds],
 });
 
+// DEBUG — Rest API calls
+client.rest.on('restDebug', (message) => {
+    console.log('[Discord REST]', message);
+});
+
+client.rest.on('rateLimited', (info) => {
+    console.warn('[Discord REST] Rate limited:', info);
+});
+
 client.once(Events.ClientReady, readyClient => {
     console.log(`Logged in as ${ readyClient.user.tag }`);
 });
+
+async function handleSetupCommand(
+    interaction: ChatInputCommandInteraction,
+): Promise<void> {
+    if (!interaction.guild) {
+        await interaction.reply({
+            content: 'This command must be used inside a server.',
+            flags: MessageFlags.Ephemeral,
+        });
+
+        return;
+    }
+
+    if (!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator)) {
+        await interaction.reply({
+            content: 'Only server administrators can configure discussions.',
+            flags: MessageFlags.Ephemeral,
+        });
+
+        return;
+    }
+
+    await interaction.deferReply({
+        flags: MessageFlags.Ephemeral,
+    });
+
+    try {
+        const forumChannelId = interaction.options.getChannel(
+            'forum-channel',
+            true,
+        ).id;
+
+        const archiveChannelId = interaction.options.getChannel(
+            'archive-channel',
+            true,
+        ).id;
+
+        const discussionManagementRole = interaction.options.getRole(
+            'discussion-management-role',
+        );
+
+        const archiveManagementRole = interaction.options.getRole(
+            'archive-management-role',
+        );
+
+        validateGuildRole(
+            interaction.guild,
+            discussionManagementRole,
+        );
+
+        validateGuildRole(
+            interaction.guild,
+            archiveManagementRole,
+        );
+
+        const forumChannel = await getForumChannel(
+            interaction.guild,
+            forumChannelId,
+        );
+
+        const archiveChannel = await getTextChannel(
+            interaction.guild,
+            archiveChannelId,
+        );
+
+        validateChannelPermissions(
+            interaction.guild,
+            forumChannel,
+            archiveChannel,
+        );
+
+        const configuration = setupGuildConfiguration({
+            guild: interaction.guild,
+            forumChannelId: forumChannel.id,
+            archiveChannelId: archiveChannel.id,
+            discussionManagementRoleId: discussionManagementRole?.id ?? null,
+            archiveManagementRoleId: archiveManagementRole?.id ?? null,
+        });
+
+        await interaction.editReply({
+            content: [
+                '### Server configuration saved successfully!',
+                '',
+                `**Forum Channel:** <#${ configuration.forumChannelId }>`,
+                `**Archive Channel:** <#${ configuration.archiveChannelId }>`,
+                `**Discussion Management Roles:** ${ configuration.discussionManagementRoleIds.length > 0
+                    ? configuration.discussionManagementRoleIds.map(id => `<@&${ id }>`).join(', ')
+                    : 'None' }`,
+                `**Archive Management Roles:** ${ configuration.archiveManagementRoleIds.length > 0
+                    ? configuration.archiveManagementRoleIds.map(id => `<@&${ id }>`).join(', ')
+                    : 'None' }`,
+            ].join('\n'),
+        });
+    } catch (error) {
+        console.error('Discussion setup validation failed:', error);
+
+        await interaction.editReply({
+            content: error instanceof Error
+                ? `Setup validation failed: ${ error.message }`
+                : 'Setup validation failed due to an unexpected error.',
+        });
+    }
+}
 
 async function handleChatInputCommand(
     interaction: ChatInputCommandInteraction,
@@ -57,7 +181,40 @@ async function handleChatInputCommand(
 
     const subcommand = interaction.options.getSubcommand();
 
+    if (subcommand === SubcommandName.Setup) {
+        await handleSetupCommand(interaction);
+        return;
+    }
+
     if (subcommand !== SubcommandName.Create) {
+        return;
+    }
+
+    if (!interaction.guild) {
+        await interaction.reply({
+            content: 'Discussions can only be created inside a server.',
+            flags: MessageFlags.Ephemeral,
+        });
+
+        return;
+    }
+
+    const configuration = guildConfigurationRepository.findByGuildId(
+        interaction.guild.id,
+    );
+
+    if (!configuration) {
+        const isAdmin = interaction.memberPermissions?.has(
+            PermissionFlagsBits.Administrator,
+        );
+
+        await interaction.reply({
+            content: isAdmin
+                ? 'This server has not been configured yet. Run `/discussion setup` before creating discussions.'
+                : 'This server has not been configured yet. Please ask a server administrator to run `/discussion setup`.',
+            flags: MessageFlags.Ephemeral,
+        });
+
         return;
     }
 
@@ -158,54 +315,6 @@ async function handleModalSubmission(
     }
 }
 
-async function handleStatusSelection(
-    interaction: StringSelectMenuInteraction,
-): Promise<void> {
-    const statusPrefix = 'discussion_status:';
-
-    if (!interaction.customId.startsWith(statusPrefix)) {
-        return;
-    }
-
-    const threadId = interaction.customId.slice(statusPrefix.length);
-    const selectedStatus = interaction.values[0];
-
-    await interaction.deferReply({
-        flags: MessageFlags.Ephemeral,
-    });
-
-    if (!threadId || !selectedStatus || !isDiscussionStatus(selectedStatus)) {
-        await interaction.editReply('Invalid discussion status selection.');
-        return;
-    }
-
-    if (!interaction.guild) {
-        await interaction.editReply(
-            'This action must be performed inside a server.',
-        );
-        return;
-    }
-
-    try {
-        await updateDiscussionStatus(
-            interaction.guild,
-            threadId,
-            selectedStatus,
-            interaction.user,
-        );
-
-        await interaction.editReply(
-            `Discussion status updated to **${ selectedStatus }**.`,
-        );
-    } catch (error) {
-        console.error('Status update failed:', error);
-
-        await interaction.editReply(
-            'Failed to update the discussion status.',
-        );
-    }
-}
-
 client.on(Events.InteractionCreate, async interaction => {
     try {
         if (interaction.isChatInputCommand()) {
@@ -214,12 +323,20 @@ client.on(Events.InteractionCreate, async interaction => {
         }
 
         if (interaction.isModalSubmit()) {
-            await handleModalSubmission(interaction);
+            if (interaction.customId.startsWith('discussion_defer_modal:')) {
+                await handleDeferDiscussion(interaction);
+            } else if (interaction.customId.startsWith('discussion_close_modal:')) {
+                await handleCloseDiscussion(interaction);
+            } else {
+                await handleModalSubmission(interaction);
+            }
+
             return;
         }
 
-        if (interaction.isStringSelectMenu()) {
-            await handleStatusSelection(interaction);
+        if (interaction.isButton()) {
+            await handleDiscussionButton(interaction);
+            return;
         }
     } catch (error) {
         console.error('Unhandled interaction error:', error);

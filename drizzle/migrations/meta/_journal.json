@@ -1,0 +1,69 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1794838140999,
+      "tag": "0000_mixed_hex",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1794839172927,
+      "tag": "0001_violet_pretty_boy",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1794839195433,
+      "tag": "0002_little_yellowjacket",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1794840299005,
+      "tag": "0003_square_landau",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1794840462233,
+      "tag": "0004_woozy_toad",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1794840551202,
+      "tag": "0005_stiff_nighthawk",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1794840950845,
+      "tag": "0006_secret_salo",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1794908737273,
+      "tag": "0007_outstanding_grandmaster",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1794909548337,
+      "tag": "0008_lazy_wind_dancer",
+      "breakpoints": true
+    }
+  ]
+}

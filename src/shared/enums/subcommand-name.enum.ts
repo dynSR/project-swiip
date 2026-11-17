@@ -1,3 +1,4 @@
 export enum SubcommandName {
-    Create = 'create'
+    Create = 'create',
+    Setup = 'setup'
 }

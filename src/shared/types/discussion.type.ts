@@ -10,13 +10,12 @@ export type DiscussionStatus =
 export type DiscussionLevel =
     typeof DISCUSSION_LEVELS[keyof typeof DISCUSSION_LEVELS];
 
-export type DiscussionCategory =
-    keyof typeof DISCUSSION_CATEGORIES;
+export type DiscussionCategory = typeof DISCUSSION_CATEGORIES[keyof typeof DISCUSSION_CATEGORIES];
 
 export type DiscussionTagName =
     | DiscussionStatus
     | DiscussionLevel
-    | typeof DISCUSSION_CATEGORIES[DiscussionCategory];
+    | DiscussionCategory;
 
 export interface DiscussionData {
     title: string;

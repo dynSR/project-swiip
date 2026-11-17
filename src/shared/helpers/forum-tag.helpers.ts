@@ -11,7 +11,7 @@ import type {
     DiscussionLevel,
     DiscussionStatus,
     DiscussionTagName,
-} from '../types/discussion.types.js';
+} from '../types/discussion.type.js';
 
 import {
     AppError,
@@ -29,35 +29,11 @@ export function getForumTagId(
     if (!tag) {
         throw new AppError(
             ERROR_CODES.FORUM_TAG_NOT_FOUND,
-            `Forum tag "${tagName}" is not configured in "${forum.name}".`,
+            `Forum tag "${ tagName }" is not configured in "${ forum.name }".`,
         );
     }
 
     return tag.id;
-}
-
-export function getDiscussionStatusTagId(
-    forum: ForumChannel,
-    status: DiscussionStatus,
-): string {
-    return getForumTagId(forum, status);
-}
-
-export function getDiscussionLevelTagId(
-    forum: ForumChannel,
-    level: DiscussionLevel,
-): string {
-    return getForumTagId(forum, level);
-}
-
-export function getDiscussionCategoryTagId(
-    forum: ForumChannel,
-    category: DiscussionCategory,
-): string {
-    return getForumTagId(
-        forum,
-        DISCUSSION_CATEGORIES[category],
-    );
 }
 
 export function getDiscussionTagIds(
@@ -67,9 +43,9 @@ export function getDiscussionTagIds(
     status: DiscussionStatus,
 ): string[] {
     return [
-        getDiscussionStatusTagId(forum, status),
-        getDiscussionLevelTagId(forum, level),
-        getDiscussionCategoryTagId(forum, category),
+        getForumTagId(forum, status),
+        getForumTagId(forum, level),
+        getForumTagId(forum, category),
     ];
 }
 

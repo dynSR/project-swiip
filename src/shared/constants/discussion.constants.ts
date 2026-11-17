@@ -19,3 +19,9 @@ export const DISCUSSION_CATEGORIES = {
     AUDIO: 'AUDIO',
     WORKFLOW: 'WORKFLOW',
 } as const;
+
+export const DECISION_OUTCOMES = {
+    APPROVED: 'APPROVED',
+    REJECTED: 'REJECTED',
+    CONSIDERED: 'CONSIDERED',
+} as const;

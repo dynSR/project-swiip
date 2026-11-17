@@ -1,0 +1,1 @@
+ALTER TABLE `discussions` ADD `archive_channel_id` text NOT NULL;

@@ -1,0 +1,633 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "e873c687-aaf7-4fd5-aab3-9e42c44acb66",
+  "prevId": "9c406a34-ea37-4181-914d-5e0a1b53cdd5",
+  "tables": {
+    "decision_record_versions": {
+      "name": "decision_record_versions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "decision_record_id": {
+          "name": "decision_record_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "version": {
+          "name": "version",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "initial_proposal": {
+          "name": "initial_proposal",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "decision": {
+          "name": "decision",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "final_summary": {
+          "name": "final_summary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "additional_notes": {
+          "name": "additional_notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "modified_by": {
+          "name": "modified_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reason": {
+          "name": "reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "decision_record_versions_record_version_unique": {
+          "name": "decision_record_versions_record_version_unique",
+          "columns": [
+            "decision_record_id",
+            "version"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "decision_record_versions_decision_record_id_decision_records_id_fk": {
+          "name": "decision_record_versions_decision_record_id_decision_records_id_fk",
+          "tableFrom": "decision_record_versions",
+          "tableTo": "decision_records",
+          "columnsFrom": [
+            "decision_record_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "decision_record_versions_version_check": {
+          "name": "decision_record_versions_version_check",
+          "value": "\"decision_record_versions\".\"version\" > 0"
+        },
+        "decision_record_versions_title_length_check": {
+          "name": "decision_record_versions_title_length_check",
+          "value": "length(\"decision_record_versions\".\"title\") BETWEEN 1 AND 150"
+        },
+        "decision_record_versions_category_check": {
+          "name": "decision_record_versions_category_check",
+          "value": "\"decision_record_versions\".\"category\" IN ('GAMEPLAY', 'ART & DESIGN', 'TECHNICAL', 'GAME DESIGN', 'AUDIO', 'WORKFLOW')"
+        },
+        "decision_record_versions_decision_check": {
+          "name": "decision_record_versions_decision_check",
+          "value": "\"decision_record_versions\".\"decision\" IN ('APPROVED', 'REJECTED', 'CONSIDERED')"
+        },
+        "decision_record_versions_final_summary_check": {
+          "name": "decision_record_versions_final_summary_check",
+          "value": "length(trim(\"decision_record_versions\".\"final_summary\")) > 0"
+        },
+        "decision_record_versions_reason_length_check": {
+          "name": "decision_record_versions_reason_length_check",
+          "value": "length(trim(\"decision_record_versions\".\"reason\")) BETWEEN 1 AND 1000"
+        }
+      }
+    },
+    "decision_records": {
+      "name": "decision_records",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "guild_id": {
+          "name": "guild_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "discussion_thread_id": {
+          "name": "discussion_thread_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "archive_channel_id": {
+          "name": "archive_channel_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "archive_message_id": {
+          "name": "archive_message_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "initial_proposal": {
+          "name": "initial_proposal",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "decision": {
+          "name": "decision",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "final_summary": {
+          "name": "final_summary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "additional_notes": {
+          "name": "additional_notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "decision_records_discussion_thread_id_unique": {
+          "name": "decision_records_discussion_thread_id_unique",
+          "columns": [
+            "discussion_thread_id"
+          ],
+          "isUnique": true
+        },
+        "decision_records_archive_message_id_unique": {
+          "name": "decision_records_archive_message_id_unique",
+          "columns": [
+            "archive_message_id"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "decision_records_guild_id_guild_configurations_guild_id_fk": {
+          "name": "decision_records_guild_id_guild_configurations_guild_id_fk",
+          "tableFrom": "decision_records",
+          "tableTo": "guild_configurations",
+          "columnsFrom": [
+            "guild_id"
+          ],
+          "columnsTo": [
+            "guild_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "decision_records_discussion_thread_id_discussions_thread_id_fk": {
+          "name": "decision_records_discussion_thread_id_discussions_thread_id_fk",
+          "tableFrom": "decision_records",
+          "tableTo": "discussions",
+          "columnsFrom": [
+            "discussion_thread_id"
+          ],
+          "columnsTo": [
+            "thread_id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "decision_records_title_length_check": {
+          "name": "decision_records_title_length_check",
+          "value": "length(\"decision_records\".\"title\") BETWEEN 1 AND 150"
+        },
+        "decision_records_category_check": {
+          "name": "decision_records_category_check",
+          "value": "\"decision_records\".\"category\" IN ('GAMEPLAY', 'ART & DESIGN', 'TECHNICAL', 'GAME DESIGN', 'AUDIO', 'WORKFLOW')"
+        },
+        "decision_records_decision_check": {
+          "name": "decision_records_decision_check",
+          "value": "\"decision_records\".\"decision\" IN ('APPROVED', 'REJECTED', 'CONSIDERED')"
+        },
+        "decision_records_final_summary_check": {
+          "name": "decision_records_final_summary_check",
+          "value": "length(trim(\"decision_records\".\"final_summary\")) > 0"
+        }
+      }
+    },
+    "discussion_histories": {
+      "name": "discussion_histories",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "discussion_thread_id": {
+          "name": "discussion_thread_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "previous_status": {
+          "name": "previous_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "new_status": {
+          "name": "new_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "performed_by": {
+          "name": "performed_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reason": {
+          "name": "reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "discussion_histories_discussion_thread_id_discussions_thread_id_fk": {
+          "name": "discussion_histories_discussion_thread_id_discussions_thread_id_fk",
+          "tableFrom": "discussion_histories",
+          "tableTo": "discussions",
+          "columnsFrom": [
+            "discussion_thread_id"
+          ],
+          "columnsTo": [
+            "thread_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "discussion_histories_previous_status_check": {
+          "name": "discussion_histories_previous_status_check",
+          "value": "\"discussion_histories\".\"previous_status\" IN ('NEW', 'OPEN', 'DEFERRED', 'CLOSED')"
+        },
+        "discussion_histories_new_status_check": {
+          "name": "discussion_histories_new_status_check",
+          "value": "\"discussion_histories\".\"new_status\" IN ('NEW', 'OPEN', 'DEFERRED', 'CLOSED')"
+        },
+        "discussion_histories_transition_check": {
+          "name": "discussion_histories_transition_check",
+          "value": "(\n        (\"discussion_histories\".\"previous_status\" = 'NEW' AND \"discussion_histories\".\"new_status\" = 'OPEN')\n        OR\n        (\"discussion_histories\".\"previous_status\" = 'OPEN' AND \"discussion_histories\".\"new_status\" IN (\n            'DEFERRED',\n            'CLOSED'\n        ))\n        OR\n        (\"discussion_histories\".\"previous_status\" = 'DEFERRED' AND \"discussion_histories\".\"new_status\" IN (\n            'OPEN',\n            'CLOSED'\n        ))\n    )"
+        },
+        "discussion_histories_reason_length_check": {
+          "name": "discussion_histories_reason_length_check",
+          "value": "length(trim(\"discussion_histories\".\"reason\")) BETWEEN 1 AND 1000"
+        }
+      }
+    },
+    "discussions": {
+      "name": "discussions",
+      "columns": {
+        "thread_id": {
+          "name": "thread_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "guild_id": {
+          "name": "guild_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "forum_channel_id": {
+          "name": "forum_channel_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "context": {
+          "name": "context",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "proposal": {
+          "name": "proposal",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "level": {
+          "name": "level",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "starter_message_id": {
+          "name": "starter_message_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "controls_message_id": {
+          "name": "controls_message_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "history_summary_message_id": {
+          "name": "history_summary_message_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "discussions_guild_id_guild_configurations_guild_id_fk": {
+          "name": "discussions_guild_id_guild_configurations_guild_id_fk",
+          "tableFrom": "discussions",
+          "tableTo": "guild_configurations",
+          "columnsFrom": [
+            "guild_id"
+          ],
+          "columnsTo": [
+            "guild_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "discussions_title_length_check": {
+          "name": "discussions_title_length_check",
+          "value": "length\n        (\n        \"discussions\".\"title\"\n        )\n        BETWEEN\n        1\n        AND\n        150"
+        },
+        "discussions_category_check": {
+          "name": "discussions_category_check",
+          "value": "\"discussions\".\"category\"\n        IN (\n        'GAMEPLAY', 'ART & DESIGN', 'TECHNICAL', 'GAME DESIGN', 'AUDIO', 'WORKFLOW'\n        )"
+        },
+        "discussions_level_check": {
+          "name": "discussions_level_check",
+          "value": "\"discussions\".\"level\"\n        IN (\n        'QUICK', 'STRUCTURED', 'DECISION'\n        )"
+        },
+        "discussions_status_check": {
+          "name": "discussions_status_check",
+          "value": "\"discussions\".\"status\"\n        IN (\n        'NEW', 'OPEN', 'DEFERRED', 'CLOSED'\n        )"
+        }
+      }
+    },
+    "guild_configurations": {
+      "name": "guild_configurations",
+      "columns": {
+        "guild_id": {
+          "name": "guild_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "forum_channel_id": {
+          "name": "forum_channel_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "archive_channel_id": {
+          "name": "archive_channel_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "discussion_management_role_ids": {
+          "name": "discussion_management_role_ids",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'[]'"
+        },
+        "archive_management_role_ids": {
+          "name": "archive_management_role_ids",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'[]'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "guild_configurations_discussion_roles_json_check": {
+          "name": "guild_configurations_discussion_roles_json_check",
+          "value": "json_valid(\"guild_configurations\".\"discussion_management_role_ids\")"
+        },
+        "guild_configurations_archive_roles_json_check": {
+          "name": "guild_configurations_archive_roles_json_check",
+          "value": "json_valid(\"guild_configurations\".\"archive_management_role_ids\")"
+        }
+      }
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}

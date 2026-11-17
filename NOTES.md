@@ -17,3 +17,5 @@
 - Make the index file more readable with specific steps to achieve what we want:
     - Proper functions and methods name
     - More file maybe to put everything at its right place in order to avoid confusion
+- Make the fetch operation like the ones used hibernate, I like the syntax
+- 
